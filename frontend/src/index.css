@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Brand — deep navy + electric blue */
+  --color-navy-950: #03070f;
+  --color-navy-900: #060d1a;
+  --color-navy-800: #0d1f3c;
+  --color-navy-700: #152d52;
+  --color-navy-600: #1e3d6e;
+
+  --color-primary-50:  #eef4ff;
+  --color-primary-100: #d9e8ff;
+  --color-primary-200: #b3d1ff;
+  --color-primary-400: #5b9bff;
+  --color-primary-500: #2b7fff;
+  --color-primary-600: #1a6ef5;
+  --color-primary-700: #1259d4;
+  --color-primary-800: #0e46a8;
+
+  --color-accent: #f97316;   /* orange accent for highlights */
+
+  --color-muted: #f4f6f9;
+  --color-muted-foreground: #5a6478;
+  --color-border: #dde2ec;
+  --color-foreground: #0a0f1e;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight text-foreground;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .section-padding {
+    @apply py-20 lg:py-28;
+  }
+
+  .container-wide {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Corporate card — sharp, clean, no hover shadow gimmick */
+  .card-base {
+    @apply rounded-lg border border-border bg-white transition-colors duration-200;
+  }
+
+  .card-elevated {
+    @apply rounded-lg border border-border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200;
+  }
+
+  /* Eyebrow label */
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-primary-600;
+  }
+
+  /* Divider line accent */
+  .accent-line {
+    @apply block h-0.5 w-10 bg-primary-600;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
