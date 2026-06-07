@@ -1,4 +1,6 @@
-const API_BASE = '/api'
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? 'https://manueltech-website.onrender.com/api' : '/api')
 
 export interface ContactPayload {
   name: string

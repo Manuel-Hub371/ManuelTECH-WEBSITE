@@ -52,7 +52,7 @@ npm install
 npm run start:dev
 ```
 
-API runs at `http://localhost:3000`
+API runs at `http://localhost:3000` for local development, and the deployed backend is available at `https://manueltech-website.onrender.com`.
 
 If login fails with “Cannot reach the API”, ensure only one backend is running on port 3000 (`npm run start:dev` in `backend`).
 
@@ -64,7 +64,7 @@ npm install
 npm run dev
 ```
 
-Site runs at `http://localhost:5173`
+Site runs at `http://localhost:5173` for local development, and the deployed frontend is available at `https://manueltechsite.netlify.app`
 
 ## API Endpoints
 

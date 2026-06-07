@@ -26,7 +26,7 @@ async function bootstrap() {
       }
 
       // Allow explicitly configured origins (for production / staging)
-      const allowed = (process.env.CORS_ORIGIN || '')
+      const allowed = (process.env.CORS_ORIGIN || 'https://manueltechsite.netlify.app')
         .split(',')
         .map((o) => o.trim())
         .filter(Boolean);
@@ -42,6 +42,6 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-  console.log(`ManuelTECH API running on http://localhost:${port}`);
+  console.log(`ManuelTECH API listening on port ${port}`);
 }
 bootstrap();
