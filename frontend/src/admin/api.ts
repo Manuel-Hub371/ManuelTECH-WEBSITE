@@ -2,7 +2,7 @@ import { getAdminToken, clearAdminToken } from './auth'
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? 'https://manueltech-website.onrender.com/api' : '/api')
+  (import.meta.env.PROD ? 'https://manueltech.onrender.com/api' : '/api')
 
 function parseErrorMessage(body: unknown, fallback: string): string {
   if (!body || typeof body !== 'object') return fallback

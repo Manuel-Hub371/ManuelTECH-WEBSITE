@@ -52,7 +52,7 @@ npm install
 npm run start:dev
 ```
 
-API runs at `http://localhost:3000` for local development, and the deployed backend is available at `https://manueltech-website.onrender.com`.
+API runs at `http://localhost:3000` for local development, and the deployed backend is available at `https://manueltech.onrender.com`.
 
 If login fails with “Cannot reach the API”, ensure only one backend is running on port 3000 (`npm run start:dev` in `backend`).
 
@@ -113,4 +113,4 @@ cd frontend && npm run build
 cd backend && npm run build && npm run start:prod
 ```
 
-Set `VITE_API_URL` to your production API URL when deploying the frontend separately.
+Set `VITE_API_BASE_URL` to your production API URL when deploying the frontend separately.
