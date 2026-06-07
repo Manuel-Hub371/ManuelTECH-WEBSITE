@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { loadLegalDoc, type LegalDoc } from '../admin/legalStore'
 import PageHeader from '../components/ui/PageHeader'
 

@@ -419,7 +419,10 @@ export interface AdminLegalDoc {
   updatedAt: string
 }
 
-export type UpdateLegalDocPayload = Omit<AdminLegalDoc, 'id' | 'type' | 'createdAt' | 'updatedAt'>
+export interface UpdateLegalDocPayload {
+  title: string
+  sections: AdminLegalSection[]
+}
 
 export const fetchLegalDoc = (type: string) =>
   publicFetch<AdminLegalDoc>(`/legal/${type}`)

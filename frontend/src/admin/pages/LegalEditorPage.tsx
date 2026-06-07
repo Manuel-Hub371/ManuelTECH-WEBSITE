@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Save, CheckCircle2, AlertCircle, Loader2, Plus, Trash2, ArrowUp, ArrowDown, FileText } from 'lucide-react'
-import { loadLegalDoc, updateLegalDoc, type LegalDoc, type LegalSection } from '../legalStore'
+import { loadLegalDoc, updateLegalDoc, type LegalDoc } from '../legalStore'
 
 const DOC_TABS = [
   { type: 'privacy', label: 'Privacy Policy' },
