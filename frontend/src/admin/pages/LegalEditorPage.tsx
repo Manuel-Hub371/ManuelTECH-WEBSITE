@@ -158,11 +158,10 @@ export default function LegalEditorPage() {
             <button
               key={tab.type}
               onClick={() => setActiveTab(tab.type)}
-              className={`pb-4 text-sm font-semibold transition border-b-2 ${
-                activeTab === tab.type
+              className={`pb-4 text-sm font-semibold transition border-b-2 ${activeTab === tab.type
                   ? 'border-primary-600 text-primary-600'
                   : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
-              }`}
+                }`}
             >
               {tab.label}
             </button>

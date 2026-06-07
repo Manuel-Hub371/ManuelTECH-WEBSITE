@@ -53,10 +53,10 @@ export default function LegalPage({ type: propType }: LegalPageProps) {
 
   const formattedDate = doc.lastUpdated
     ? `Last updated: ${new Date(doc.lastUpdated).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}`
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })}`
     : ''
 
   return (
