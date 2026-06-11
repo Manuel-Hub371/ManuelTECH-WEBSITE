@@ -13,6 +13,7 @@ import { AboutModule } from './about/about.module';
 import { ServiceModule } from './service/service.module';
 import { BlogModule } from './blog/blog.module';
 import { LegalModule } from './legal/legal.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { LegalModule } from './legal/legal.module';
     ServiceModule,
     BlogModule,
     LegalModule,
+    ChatbotModule,
   ],
   controllers: [AppController],
   providers: [AppService],

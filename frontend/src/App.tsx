@@ -30,11 +30,13 @@ import ServiceListPage from './admin/pages/ServiceListPage'
 import ServiceEditorPage from './admin/pages/ServiceEditorPage'
 import LegalPage from './pages/LegalPage'
 import LegalEditorPage from './admin/pages/LegalEditorPage'
+import ChatBot from './components/ChatBot'
 
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ChatBot />
       <Routes>
         {/* ── Public site ── */}
         <Route element={<Layout />}>
