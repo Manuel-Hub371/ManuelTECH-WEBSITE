@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { portfolioProjects } from '../../data/portfolio'
+import { loadCaseStudies } from '../../admin/caseStudyStore'
+import type { CaseStudy } from '../../data/products'
 import SectionHeading from '../ui/SectionHeading'
 
 const categoryColors: Record<string, string> = {
@@ -14,7 +17,35 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function CaseStudies() {
-  const featured = portfolioProjects.slice(0, 3)
+  const [dbCaseStudies, setDbCaseStudies] = useState<CaseStudy[]>([])
+
+  useEffect(() => {
+    loadCaseStudies()
+      .then(setDbCaseStudies)
+      .catch(() => {})
+  }, [])
+
+  const displayCaseStudies = dbCaseStudies.length > 0
+    ? dbCaseStudies.map(s => ({
+        id: s.id,
+        category: s.category,
+        title: s.title,
+        description: s.description,
+        techStack: s.techStack,
+        image: s.image || '',
+        results: Array.isArray(s.results) ? s.results[0] : s.results,
+      }))
+    : portfolioProjects.map(p => ({
+        id: p.id,
+        category: p.category,
+        title: p.title,
+        description: p.description,
+        techStack: p.techStack,
+        image: p.image,
+        results: p.results,
+      }))
+
+  const featured = displayCaseStudies.slice(0, 3)
 
   return (
     <section className="section-padding bg-white">
@@ -44,32 +75,34 @@ export default function CaseStudies() {
               transition={{ delay: i * 0.09 }}
               className="group flex flex-col bg-white"
             >
-              <div className="overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="aspect-[16/9] w-full object-cover transition duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="flex flex-1 flex-col p-7">
-                <span className={`inline-block self-start rounded px-2.5 py-1 text-xs font-semibold ${categoryColors[project.category] ?? 'bg-muted text-slate-600'}`}>
-                  {project.category}
-                </span>
-                <h3 className="mt-3 font-display text-xl font-bold text-navy-900">{project.title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                  {project.description}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {project.techStack.slice(0, 3).map((tech) => (
-                    <span key={tech} className="rounded border border-border px-2 py-0.5 text-xs text-slate-500">
-                      {tech}
-                    </span>
-                  ))}
+              <Link to={`/portfolio/case-study/${project.id}`} className="flex flex-col flex-1">
+                <div className="overflow-hidden">
+                  <img
+                    src={project.image || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80'}
+                    alt={project.title}
+                    className="aspect-[16/9] w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
                 </div>
-                <div className="mt-4 border-t border-border pt-4">
-                  <p className="text-sm font-medium text-emerald-700">{project.results}</p>
+                <div className="flex flex-1 flex-col p-7">
+                  <span className={`inline-block self-start rounded px-2.5 py-1 text-xs font-semibold ${categoryColors[project.category] ?? 'bg-muted text-slate-600'}`}>
+                    {project.category}
+                  </span>
+                  <h3 className="mt-3 font-display text-xl font-bold text-navy-900 group-hover:text-primary-600 transition">{project.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                    {project.description}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {project.techStack.slice(0, 3).map((tech) => (
+                      <span key={tech} className="rounded border border-border px-2 py-0.5 text-xs text-slate-500">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-4 border-t border-border pt-4">
+                    <p className="text-sm font-medium text-emerald-700">{project.results}</p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </motion.article>
           ))}
         </div>

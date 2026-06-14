@@ -1,54 +1,87 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Globe, Code2, Brain, Palette, Bot, GraduationCap } from 'lucide-react'
+import * as Icons from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { loadServices } from '../../admin/serviceStore'
+import type { ServiceCategory } from '../../data/services'
 import SectionHeading from '../ui/SectionHeading'
 
-const services = [
+const getIcon = (iconName: string) => {
+  return (Icons as any)[iconName] || Icons.Code2
+}
+
+const defaultServices = [
   {
-    icon: Globe,
+    iconName: 'Globe',
     title: 'Web Development',
     description: 'Corporate websites, e-commerce platforms, web applications, and APIs — built for performance and conversion.',
-    href: '/services/web-development',
-    accent: 'border-l-sky-500',
+    slug: 'web-development',
+    borderAccent: 'border-l-sky-500',
+    textAccent: 'text-sky-600',
   },
   {
-    icon: Code2,
+    iconName: 'Code2',
     title: 'Software & App Development',
     description: 'ERP systems, school and hospital platforms, inventory tools, mobile apps, and custom business software.',
-    href: '/services/software-development',
-    accent: 'border-l-primary-500',
+    slug: 'software-development',
+    borderAccent: 'border-l-primary-500',
+    textAccent: 'text-primary-600',
   },
   {
-    icon: Brain,
+    iconName: 'Brain',
     title: 'AI & Automation Agents',
     description: 'Intelligent agents, chatbots, workflow automation, computer vision, and predictive analytics systems.',
-    href: '/services/ai-automation',
-    accent: 'border-l-violet-500',
+    slug: 'ai-automation',
+    borderAccent: 'border-l-violet-500',
+    textAccent: 'text-violet-600',
   },
   {
-    icon: Palette,
+    iconName: 'Palette',
     title: 'Creative Services',
     description: 'Brand identity, UI/UX design, graphic design, motion graphics, and pitch decks that make an impression.',
-    href: '/services/creative-services',
-    accent: 'border-l-rose-500',
+    slug: 'creative-services',
+    borderAccent: 'border-l-rose-500',
+    textAccent: 'text-rose-600',
   },
   {
-    icon: Bot,
+    iconName: 'Bot',
     title: 'Robotics',
     description: 'Security robots, service robots, smart gate systems, IoT networks, and custom hardware solutions.',
-    href: '/services/robotics',
-    accent: 'border-l-amber-500',
+    slug: 'robotics',
+    borderAccent: 'border-l-amber-500',
+    textAccent: 'text-amber-600',
   },
   {
-    icon: GraduationCap,
+    iconName: 'GraduationCap',
     title: 'Training & Education',
     description: 'Practical tech training in web dev, AI, robotics, and design — for individuals, teams, and institutions.',
-    href: '/services/training-education',
-    accent: 'border-l-emerald-500',
+    slug: 'training-education',
+    borderAccent: 'border-l-emerald-500',
+    textAccent: 'text-emerald-600',
   },
 ]
 
 export default function ServicesGrid() {
+  const [dbServices, setDbServices] = useState<ServiceCategory[]>([])
+
+  useEffect(() => {
+    loadServices()
+      .then(setDbServices)
+      .catch(() => {})
+  }, [])
+
+  const displayServices = dbServices.length > 0
+    ? dbServices.map(s => ({
+        iconName: s.icon,
+        title: s.title,
+        description: s.description,
+        slug: s.slug,
+        borderAccent: s.detail.borderAccent,
+        textAccent: s.detail.textAccent,
+      }))
+    : defaultServices
+
   return (
     <section className="section-padding bg-white">
       <div className="container-wide">
@@ -68,31 +101,34 @@ export default function ServicesGrid() {
         </div>
 
         <div className="mt-12 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.06 }}
-            >
-              <Link
-                to={service.href}
-                className={`group flex h-full flex-col border-l-4 bg-white p-8 transition hover:bg-muted ${service.accent}`}
+          {displayServices.map((service, i) => {
+            const IconComponent = getIcon(service.iconName)
+            return (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded bg-muted text-navy-800 transition group-hover:bg-primary-600 group-hover:text-white">
-                  <service.icon size={22} />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-bold text-navy-900">{service.title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary-600 opacity-0 transition-all group-hover:opacity-100 group-hover:gap-2">
-                  Learn more <ArrowRight size={14} />
-                </span>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  to={`/services/${service.slug}`}
+                  className={`group flex h-full flex-col border-l-4 bg-white p-8 transition hover:bg-muted ${service.borderAccent || 'border-l-primary-600'}`}
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded bg-muted text-navy-800 transition group-hover:bg-primary-600 group-hover:text-white">
+                    <IconComponent size={22} />
+                  </div>
+                  <h3 className="mt-5 font-display text-lg font-bold text-navy-900">{service.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    {service.description}
+                  </p>
+                  <span className={`mt-5 inline-flex items-center gap-1 text-sm font-semibold ${service.textAccent || 'text-primary-600'} opacity-0 transition-all group-hover:opacity-100 group-hover:gap-2`}>
+                    Learn more <ArrowRight size={14} />
+                  </span>
+                </Link>
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* Bottom CTA strip */}

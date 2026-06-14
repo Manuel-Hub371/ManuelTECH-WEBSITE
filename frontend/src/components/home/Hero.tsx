@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Globe, Code2, Brain, Palette, Bot, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
 
 const services = [
   { icon: Globe,         label: 'Web Development' },
@@ -11,14 +13,19 @@ const services = [
   { icon: GraduationCap, label: 'Training' },
 ]
 
-const stats = [
-  { value: '50+', label: 'Projects Delivered' },
-  { value: '30+', label: 'Clients Served' },
-  { value: '8+',  label: 'Years Experience' },
-  { value: '5',   label: 'Countries' },
-]
-
 export default function Hero() {
+  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+
+  useEffect(() => {
+    loadCompanyInfo().then(setInfo).catch(() => {})
+  }, [])
+
+  const stats = [
+    { value: info.statProjects, label: 'Projects Delivered' },
+    { value: info.statClients, label: 'Clients Served' },
+    { value: info.statYears, label: 'Years Experience' },
+    { value: info.statCountries, label: 'Countries' },
+  ]
   return (
     <section className="relative overflow-hidden bg-navy-900">
       {/* Subtle background texture */}
@@ -72,8 +79,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.16 }}
             className="mt-6 max-w-lg text-lg leading-relaxed text-slate-300"
           >
-            ManuelTECH delivers web development, custom software, AI agents,
-            creative design, robotics, and hands-on training — all under one roof.
+            {info.heroDescription}
           </motion.p>
 
           {/* CTAs */}
