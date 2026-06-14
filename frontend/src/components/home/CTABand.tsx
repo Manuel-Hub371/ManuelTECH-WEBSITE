@@ -1,7 +1,15 @@
+import { useState, useEffect } from 'react'
 import { ArrowRight, Phone, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
 
 export default function CTABand() {
+  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+
+  useEffect(() => {
+    loadCompanyInfo().then(setInfo).catch(() => {})
+  }, [])
+
   return (
     <section className="bg-navy-900">
       <div className="container-wide">
@@ -32,22 +40,26 @@ export default function CTABand() {
               Book Free Consultation <ArrowRight size={18} />
             </Link>
             <div className="flex flex-wrap gap-4">
-              <a
-                href="tel:+1234567890"
-                className="inline-flex items-center gap-2 rounded border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                <Phone size={16} />
-                Call Us
-              </a>
-              <a
-                href="https://wa.me/1234567890"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-500/20"
-              >
-                <MessageCircle size={16} />
-                WhatsApp
-              </a>
+              {info.contactPhone && (
+                <a
+                  href={`tel:${info.contactPhone.replace(/[^\d+]/g, '')}`}
+                  className="inline-flex items-center gap-2 rounded border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  <Phone size={16} />
+                  Call Us
+                </a>
+              )}
+              {info.contactWhatsapp && (
+                <a
+                  href={info.contactWhatsapp}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-500/20"
+                >
+                  <MessageCircle size={16} />
+                  WhatsApp
+                </a>
+              )}
             </div>
           </div>
         </div>

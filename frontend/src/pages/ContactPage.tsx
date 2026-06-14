@@ -61,8 +61,8 @@ export default function ContactPage() {
 
   const contactInfo = [
     { icon: Mail,          label: 'Email',          value: info.contactEmail    || 'hello@manueltech.com',          href: info.contactEmail    ? `mailto:${info.contactEmail}`    : 'mailto:hello@manueltech.com' },
-    { icon: Phone,         label: 'Phone',          value: info.contactPhone    || '+1 (234) 567-890',              href: info.contactPhone    ? `tel:${info.contactPhone}`        : 'tel:+1234567890' },
-    { icon: MessageCircle, label: 'WhatsApp',       value: 'Chat with us',                                         href: info.contactWhatsapp || 'https://wa.me/1234567890' },
+    { icon: Phone,         label: 'Phone',          value: info.contactPhone    || 'Not provided',              href: info.contactPhone    ? `tel:${info.contactPhone}`        : undefined },
+    { icon: MessageCircle, label: 'WhatsApp',       value: 'Chat with us',                                         href: info.contactWhatsapp || undefined },
     { icon: Clock,         label: 'Business Hours', value: info.businessHours   || 'Mon – Fri, 9:00 AM – 6:00 PM', href: undefined },
     { icon: MapPin,        label: 'Office',         value: info.contactLocation || 'Tech Innovation Hub, Your City',href: undefined },
   ]

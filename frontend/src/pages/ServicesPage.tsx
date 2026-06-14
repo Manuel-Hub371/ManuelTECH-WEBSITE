@@ -4,6 +4,7 @@ import * as Icons from 'lucide-react'
 import { ArrowRight, CheckCircle2, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { loadServices } from '../admin/serviceStore'
+import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../admin/aboutStore'
 import type { ServiceCategory } from '../data/services'
 import CTABand from '../components/home/CTABand'
 const getIcon = (iconName: string) => {
@@ -79,7 +80,7 @@ function MobileNav({ serviceCategories }: { serviceCategories: ServiceCategory[]
 }
 
 /* ─── Individual service section ────────────────────────────────── */
-function ServiceSection({ category, index }: { category: ServiceCategory; index: number }) {
+function ServiceSection({ category, index, info }: { category: ServiceCategory; index: number; info: CompanyInfoData }) {
   const IconComponent = ((Icons as any)[category.icon] || Icons.Code2) as React.ComponentType<{ size?: number; className?: string }>
   const accent = {
     border: category.detail.borderAccent || 'border-l-primary-600',
@@ -143,13 +144,15 @@ function ServiceSection({ category, index }: { category: ServiceCategory; index:
             >
               Get a Quote
             </Link>
-            <a
-              href="tel:+1234567890"
-              className="inline-flex items-center gap-2 rounded border border-border px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-navy-900 hover:text-navy-900"
-            >
-              <Phone size={14} />
-              Call Us
-            </a>
+            {info.contactPhone && (
+              <a
+                href={`tel:${info.contactPhone.replace(/[^\d+]/g, '')}`}
+                className="inline-flex items-center gap-2 rounded border border-border px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-navy-900 hover:text-navy-900"
+              >
+                <Phone size={14} />
+                Call Us
+              </a>
+            )}
           </div>
         </div>
 
@@ -187,6 +190,7 @@ function ServiceSection({ category, index }: { category: ServiceCategory; index:
 export default function ServicesPage() {
   const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([])
   const [activeSection, setActiveSection] = useState('')
+  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
@@ -194,6 +198,7 @@ export default function ServicesPage() {
       setServiceCategories(cats)
       if (cats.length) setActiveSection(cats[0].id)
     })
+    loadCompanyInfo().then(setInfo).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -266,9 +271,9 @@ export default function ServicesPage() {
             <SideNav active={activeSection} serviceCategories={serviceCategories} />
 
             <div className="min-w-0 flex-1 space-y-20">
-              {serviceCategories.map((category, index) => (
-                <ServiceSection key={category.id} category={category} index={index} />
-              ))}
+              {serviceCategories.map((cat, i) => (
+              <ServiceSection key={cat.id} category={cat} index={i} info={info} />
+            ))}
             </div>
           </div>
         </div>
