@@ -11,56 +11,7 @@ const getIcon = (iconName: string) => {
   return (Icons as any)[iconName] || Icons.Code2
 }
 
-const defaultServices = [
-  {
-    iconName: 'Globe',
-    title: 'Web Development',
-    description: 'Corporate websites, e-commerce platforms, web applications, and APIs — built for performance and conversion.',
-    slug: 'web-development',
-    borderAccent: 'border-l-sky-500',
-    textAccent: 'text-sky-600',
-  },
-  {
-    iconName: 'Code2',
-    title: 'Software & App Development',
-    description: 'ERP systems, school and hospital platforms, inventory tools, mobile apps, and custom business software.',
-    slug: 'software-development',
-    borderAccent: 'border-l-primary-500',
-    textAccent: 'text-primary-600',
-  },
-  {
-    iconName: 'Brain',
-    title: 'AI & Automation Agents',
-    description: 'Intelligent agents, chatbots, workflow automation, computer vision, and predictive analytics systems.',
-    slug: 'ai-automation',
-    borderAccent: 'border-l-violet-500',
-    textAccent: 'text-violet-600',
-  },
-  {
-    iconName: 'Palette',
-    title: 'Creative Services',
-    description: 'Brand identity, UI/UX design, graphic design, motion graphics, and pitch decks that make an impression.',
-    slug: 'creative-services',
-    borderAccent: 'border-l-rose-500',
-    textAccent: 'text-rose-600',
-  },
-  {
-    iconName: 'Bot',
-    title: 'Robotics',
-    description: 'Security robots, service robots, smart gate systems, IoT networks, and custom hardware solutions.',
-    slug: 'robotics',
-    borderAccent: 'border-l-amber-500',
-    textAccent: 'text-amber-600',
-  },
-  {
-    iconName: 'GraduationCap',
-    title: 'Training & Education',
-    description: 'Practical tech training in web dev, AI, robotics, and design — for individuals, teams, and institutions.',
-    slug: 'training-education',
-    borderAccent: 'border-l-emerald-500',
-    textAccent: 'text-emerald-600',
-  },
-]
+
 
 export default function ServicesGrid() {
   const [dbServices, setDbServices] = useState<ServiceCategory[]>([])
@@ -71,8 +22,7 @@ export default function ServicesGrid() {
       .catch(() => {})
   }, [])
 
-  const displayServices = dbServices.length > 0
-    ? dbServices.map(s => ({
+  const displayServices = dbServices.map(s => ({
         iconName: s.icon,
         title: s.title,
         description: s.description,
@@ -80,7 +30,6 @@ export default function ServicesGrid() {
         borderAccent: s.detail.borderAccent,
         textAccent: s.detail.textAccent,
       }))
-    : defaultServices
 
   return (
     <section className="section-padding bg-white">

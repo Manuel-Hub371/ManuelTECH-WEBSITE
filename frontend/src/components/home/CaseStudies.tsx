@@ -25,8 +25,7 @@ export default function CaseStudies() {
       .catch(() => {})
   }, [])
 
-  const displayCaseStudies = dbCaseStudies.length > 0
-    ? dbCaseStudies.map(s => ({
+  const displayCaseStudies = dbCaseStudies.map(s => ({
         id: s.id,
         category: s.category,
         title: s.title,
@@ -34,15 +33,6 @@ export default function CaseStudies() {
         techStack: s.techStack,
         image: s.image || '',
         results: Array.isArray(s.results) ? s.results[0] : s.results,
-      }))
-    : portfolioProjects.map(p => ({
-        id: p.id,
-        category: p.category,
-        title: p.title,
-        description: p.description,
-        techStack: p.techStack,
-        image: p.image,
-        results: p.results,
       }))
 
   const featured = displayCaseStudies.slice(0, 3)

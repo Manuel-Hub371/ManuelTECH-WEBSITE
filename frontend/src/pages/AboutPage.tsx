@@ -107,7 +107,7 @@ export default function AboutPage() {
 
             <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.15 }}
               className="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-              {stats.map((s) => (
+              {stats.filter(s => s.value).map((s) => (
                 <div key={s.label} className="flex flex-col gap-2 bg-navy-800/60 px-8 py-8">
                   <s.icon size={20} className="text-primary-400" />
                   <p className="font-display text-4xl font-bold text-white">{s.value}</p>
