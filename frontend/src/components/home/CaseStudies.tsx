@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { portfolioProjects } from '../../data/portfolio'
+
 import { loadCaseStudies } from '../../admin/caseStudyStore'
 import type { CaseStudy } from '../../data/products'
 import SectionHeading from '../ui/SectionHeading'
