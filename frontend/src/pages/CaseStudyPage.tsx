@@ -5,28 +5,17 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Building2, Layers, Loader2 } from 
 import type { CaseStudy } from '../data/products'
 import { loadCaseStudies } from '../admin/caseStudyStore'
 import CTABand from '../components/home/CTABand'
-
-const categoryColors: Record<string, string> = {
-  'Web Development':      'bg-sky-50 text-sky-700 border-l-sky-500',
-  'Software Development': 'bg-primary-50 text-primary-700 border-l-primary-600',
-  'AI & Automation':      'bg-violet-50 text-violet-700 border-l-violet-600',
-  'Creative Services':    'bg-rose-50 text-rose-700 border-l-rose-500',
-  'Robotics':             'bg-amber-50 text-amber-700 border-l-amber-500',
-  'Training & Education': 'bg-emerald-50 text-emerald-700 border-l-emerald-500',
-}
-
-const accentBg: Record<string, string> = {
-  'Web Development':      'bg-sky-600',
-  'Software Development': 'bg-primary-600',
-  'AI & Automation':      'bg-violet-600',
-  'Creative Services':    'bg-rose-600',
-  'Robotics':             'bg-amber-500',
-  'Training & Education': 'bg-emerald-600',
-}
+import { useServices, buildCategoryColorMap, buildBorderAccentMap } from '../hooks/useServices'
 
 export default function CaseStudyPage() {
   const { id }   = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const services = useServices()
+  const categoryColors = buildCategoryColorMap(services)
+  // Build accentBg from accentColor of each service
+  const accentBg: Record<string, string> = Object.fromEntries(
+    services.map((s) => [s.title, s.detail.accentColor || 'bg-primary-600'])
+  )
 
   const [study, setStudy]   = useState<CaseStudy | null>(null)
   const [related, setRelated] = useState<CaseStudy[]>([])

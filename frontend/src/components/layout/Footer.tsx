@@ -3,29 +3,27 @@ import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, MessageCircle, Share2, Rss, Globe, Link2, AtSign, Camera } from 'lucide-react'
 import Logo from '../ui/Logo'
 import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
+import { useServices } from '../../hooks/useServices'
+import type { ServiceCategory } from '../../data/services'
 
-const footerLinks = {
-  company: [
-    { label: 'About Us',          to: '/about' },
-    { label: 'Portfolio',         to: '/portfolio' },
-    { label: 'Blog',              to: '/blog' },
-    { label: 'Contact',           to: '/contact' },
-    { label: 'Book Consultation', to: '/contact?consultation=true' },
-  ],
-  services: [
-    { label: 'Web Development',      to: '/services#web' },
-    { label: 'Software & Apps',      to: '/services#software' },
-    { label: 'AI & Automation',      to: '/services#ai' },
-    { label: 'Creative Services',    to: '/services#creative' },
-    { label: 'Robotics',             to: '/services#robotics' },
-    { label: 'Training & Education', to: '/services#training' },
-  ],
-}
+const companyLinks = [
+  { label: 'About Us',          to: '/about' },
+  { label: 'Portfolio',         to: '/portfolio' },
+  { label: 'Blog',              to: '/blog' },
+  { label: 'Contact',           to: '/contact' },
+  { label: 'Book Consultation', to: '/contact?consultation=true' },
+]
 
 export default function Footer() {
   const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const services = useServices()
+
+  const serviceLinks = services.map((s: ServiceCategory) => ({
+    label: s.title,
+    to: `/services/${s.slug}`,
+  }))
 
   useEffect(() => {
     loadCompanyInfo().then(setInfo)
@@ -76,7 +74,7 @@ export default function Footer() {
             <div>
               <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-white">Company</h4>
               <ul className="space-y-3">
-                {footerLinks.company.map((link) => (
+                {companyLinks.map((link) => (
                   <li key={link.label}>
                     <Link to={link.to} className="text-sm transition hover:text-white">{link.label}</Link>
                   </li>
@@ -86,7 +84,7 @@ export default function Footer() {
             <div className="sm:col-span-2">
               <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-white">Services</h4>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
-                {footerLinks.services.map((link) => (
+                {serviceLinks.map((link) => (
                   <li key={link.label}>
                     <Link to={link.to} className="text-sm transition hover:text-white">{link.label}</Link>
                   </li>

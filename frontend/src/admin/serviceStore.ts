@@ -73,11 +73,13 @@ export async function createService(service: ServiceCategory, sortOrder = 0): Pr
 }
 
 export async function updateService(id: string, changes: Partial<ServiceCategory> & { _adminId?: string }): Promise<ServiceCategory> {
-  // _adminId is the backend UUID; id here is the slug used in state
-  const adminId = changes._adminId ?? id
+  // Always fetch fresh from API to resolve the real MongoDB _id by slug
   const data = await fetchServices()
-  const existing = data.find((s) => s.slug === id || s.id === adminId)
-  if (!existing) throw new Error('Service not found')
+  const existing = data.find((s) => s.slug === id || s.id === changes._adminId)
+  if (!existing) throw new Error(`Service "${id}" not found in database`)
+
+  // Use the API's real id — never use a slug as a Mongo ObjectId
+  const mongoId = existing.id
 
   const catExisting = toCategory(existing)
   const merged: ServiceCategory = {
@@ -87,7 +89,7 @@ export async function updateService(id: string, changes: Partial<ServiceCategory
   }
 
   const payload: UpdateServicePayload = toPayload(merged, existing.sortOrder)
-  const updated = await apiUpdateService(adminId, payload)
+  const updated = await apiUpdateService(mongoId, payload)
   return toCategory(updated)
 }
 

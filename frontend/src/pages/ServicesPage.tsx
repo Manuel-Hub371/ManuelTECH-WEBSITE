@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import * as Icons from 'lucide-react'
 import { ArrowRight, CheckCircle2, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { loadServices } from '../admin/serviceStore'
+import { useServices } from '../hooks/useServices'
 import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../admin/aboutStore'
 import type { ServiceCategory } from '../data/services'
 import CTABand from '../components/home/CTABand'
@@ -188,18 +188,20 @@ function ServiceSection({ category, index, info }: { category: ServiceCategory; 
 
 /* ─── Page ──────────────────────────────────────────────────────── */
 export default function ServicesPage() {
-  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([])
+  const serviceCategories = useServices()
   const [activeSection, setActiveSection] = useState('')
   const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
-    loadServices().then((cats) => {
-      setServiceCategories(cats)
-      if (cats.length) setActiveSection(cats[0].id)
-    })
     loadCompanyInfo().then(setInfo).catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (serviceCategories.length && !activeSection) {
+      setActiveSection(serviceCategories[0].id)
+    }
+  }, [serviceCategories, activeSection])
 
   useEffect(() => {
     if (!serviceCategories.length) return
@@ -234,7 +236,7 @@ export default function ServicesPage() {
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-400">Our Services</span>
             </div>
             <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
-              Six disciplines.<br />One accountable partner.
+              {serviceCategories.length > 0 ? serviceCategories.length : 'Full-spectrum'} disciplines.<br />One accountable partner.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-300">
               From building your first website to deploying AI agents and training your team —
@@ -284,10 +286,10 @@ export default function ServicesPage() {
         <div className="container-wide">
           <div className="grid gap-px bg-border border border-border sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { value: '50+', label: 'Projects Delivered', sub: 'Across all six service areas' },
+              { value: info.statProjects || '50+', label: 'Projects Delivered', sub: 'Across all service areas' },
               { value: '98%', label: 'Client Satisfaction', sub: 'Based on post-project surveys' },
               { value: '48h', label: 'Quote Turnaround', sub: 'From brief to detailed proposal' },
-              { value: '8+', label: 'Years of Experience', sub: 'Serving clients in 5 countries' },
+              { value: info.statYears ? `${info.statYears} Yrs` : '8+ Yrs', label: 'Experience', sub: `Serving clients in ${info.statCountries || '5'} countries` },
             ].map((stat) => (
               <div key={stat.label} className="bg-white px-8 py-8">
                 <p className="font-display text-4xl font-bold text-navy-900">{stat.value}</p>

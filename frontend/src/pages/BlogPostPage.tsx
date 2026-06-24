@@ -5,18 +5,12 @@ import { ArrowLeft, ArrowRight, Clock, Calendar, Tag } from 'lucide-react'
 import { loadPosts } from '../admin/blogStore'
 import type { BlogPost } from '../data/blog'
 import CTABand from '../components/home/CTABand'
-
-const categoryColors: Record<string, string> = {
-  'AI & Automation':      'bg-violet-50 text-violet-700 border-violet-200',
-  'Software Development': 'bg-primary-50 text-primary-700 border-primary-200',
-  'Robotics':             'bg-amber-50 text-amber-700 border-amber-200',
-  'Creative Services':    'bg-rose-50 text-rose-700 border-rose-200',
-  'Training & Education': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'Web Development':      'bg-sky-50 text-sky-700 border-sky-200',
-}
+import { useServices, buildCategoryColorMap } from '../hooks/useServices'
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>()
+  const services = useServices()
+  const categoryColors = buildCategoryColorMap(services)
   const [post, setPost] = useState<BlogPost | null>(null)
   const [suggested, setSuggested] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)

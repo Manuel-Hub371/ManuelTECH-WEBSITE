@@ -9,6 +9,7 @@ import { loadProducts } from '../admin/productStore'
 import { loadCaseStudies } from '../admin/caseStudyStore'
 import { loadPosts } from '../admin/blogStore'
 import CTABand from '../components/home/CTABand'
+import { useServices, buildCategoryColorMap, numberToWord } from '../hooks/useServices'
 
 /* ─── helpers ───────────────────────────────────────────────────── */
 const statusColors: Record<string, string> = {
@@ -17,37 +18,25 @@ const statusColors: Record<string, string> = {
   'In Development': 'bg-slate-100 text-slate-600 border border-slate-200',
 }
 
-const categoryColors: Record<string, string> = {
-  'Web Development':      'bg-sky-50 text-sky-700',
-  'Software Development': 'bg-primary-50 text-primary-700',
-  'AI & Automation':      'bg-violet-50 text-violet-700',
-  'Creative Services':    'bg-rose-50 text-rose-700',
-  'Robotics':             'bg-amber-50 text-amber-700',
-  'Training & Education': 'bg-emerald-50 text-emerald-700',
-}
-
-const projectCategoryColors: Record<string, string> = {
-  Web:      'text-sky-600 bg-sky-50',
-  Software: 'text-primary-600 bg-primary-50',
-  AI:       'text-violet-600 bg-violet-50',
-  Creative: 'text-rose-600 bg-rose-50',
-  Robotics: 'text-amber-600 bg-amber-50',
-  Training: 'text-emerald-600 bg-emerald-50',
-}
-
-const blogCategoryColors: Record<string, string> = {
-  'AI & Automation':      'bg-violet-50 text-violet-700',
-  'Software Development': 'bg-primary-50 text-primary-700',
-  'Robotics':             'bg-amber-50 text-amber-700',
-  'Creative Services':    'bg-rose-50 text-rose-700',
-  'Training & Education': 'bg-emerald-50 text-emerald-700',
-  'Web Development':      'bg-sky-50 text-sky-700',
-}
-
-const projectFilters = ['All', 'Web', 'Software', 'AI', 'Creative', 'Robotics', 'Training']
-
 /* ─── Page ──────────────────────────────────────────────────────── */
 export default function ProductsPage() {
+  const services = useServices()
+  // One map for all content that stores category by service title
+  const categoryColors = buildCategoryColorMap(services)
+  // For blog/case study badges use the same map
+  const blogCategoryColors = categoryColors
+  // Project quick-filters: All + first word of each service title
+  const projectFilters = ['All', ...services.map((s) => s.title.split(' ')[0])]
+  // Project tile colour map keyed by first word
+  const projectCategoryColors: Record<string, string> = Object.fromEntries(
+    services.map((s) => {
+      const key = s.title.split(' ')[0]
+      const text = s.detail.textAccent   || 'text-primary-600'
+      const bg   = (s.detail.accentColor || 'bg-primary-600').replace(/\d+$/, '50')
+      return [key, `${text} ${bg}`]
+    })
+  )
+
   const [projectFilter, setProjectFilter]     = useState('All')
   const [portfolioProducts, setPortfolioProducts] = useState<Product[]>([])
   const [caseStudies, setCaseStudies]         = useState<CaseStudy[]>([])
@@ -313,7 +302,7 @@ export default function ProductsPage() {
                 The broader body of work.
               </h2>
               <p className="mt-3 max-w-xl text-base text-muted-foreground">
-                A selection of client projects delivered across all six service areas.
+                A selection of client projects delivered across all {numberToWord(services.length)} service areas.
               </p>
             </div>
             <div className="flex items-center gap-2">

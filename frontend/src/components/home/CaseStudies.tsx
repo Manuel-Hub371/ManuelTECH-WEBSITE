@@ -6,18 +6,12 @@ import { Link } from 'react-router-dom'
 import { loadCaseStudies } from '../../admin/caseStudyStore'
 import type { CaseStudy } from '../../data/products'
 import SectionHeading from '../ui/SectionHeading'
-
-const categoryColors: Record<string, string> = {
-  'Web Development':      'bg-sky-50 text-sky-700',
-  'Software Development': 'bg-primary-50 text-primary-700',
-  'AI & Automation':      'bg-violet-50 text-violet-700',
-  'Creative Services':    'bg-rose-50 text-rose-700',
-  'Robotics':             'bg-amber-50 text-amber-700',
-  'Training & Education': 'bg-emerald-50 text-emerald-700',
-}
+import { useServices, numberToWord, buildCategoryColorMap } from '../../hooks/useServices'
 
 export default function CaseStudies() {
   const [dbCaseStudies, setDbCaseStudies] = useState<CaseStudy[]>([])
+  const services = useServices()
+  const categoryColors = buildCategoryColorMap(services)
 
   useEffect(() => {
     loadCaseStudies()
@@ -45,7 +39,7 @@ export default function CaseStudies() {
             align="left"
             eyebrow="Case Studies"
             title="Real projects. Measurable results."
-            description="A sample of what we've delivered across our six service areas."
+            description={`A sample of what we've delivered across our ${numberToWord(services.length)} service areas.`}
           />
           <Link
             to="/portfolio#case-studies"

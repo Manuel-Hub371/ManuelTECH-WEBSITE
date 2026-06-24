@@ -9,9 +9,9 @@ import {
   createCaseStudy,
   updateCaseStudy,
   generateCaseStudyId,
-  CATEGORIES,
   INDUSTRIES,
 } from '../caseStudyStore'
+import { loadServices } from '../serviceStore'
 import type { CaseStudy } from '../../data/products'
 
 const emptyStudy: Omit<CaseStudy, 'id'> = {
@@ -31,6 +31,11 @@ export default function CaseStudyEditorPage() {
   const { id }   = useParams<{ id: string }>()
   const navigate = useNavigate()
   const isEdit   = Boolean(id)
+  const [categories, setCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    loadServices().then((svcs) => setCategories(svcs.map((s) => s.title))).catch(() => {})
+  }, [])
 
   const [form, setForm]         = useState<Omit<CaseStudy, 'id'>>(emptyStudy)
   const [errors, setErrors]     = useState<Record<string, string>>({})
@@ -370,7 +375,7 @@ export default function CaseStudyEditorPage() {
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className={inputClass()}
                 >
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
 

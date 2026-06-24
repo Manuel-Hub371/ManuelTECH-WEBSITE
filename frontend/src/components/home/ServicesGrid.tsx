@@ -1,35 +1,31 @@
-import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import * as Icons from 'lucide-react'
 import { ArrowRight } from 'lucide-react'
-import { loadServices } from '../../admin/serviceStore'
-import type { ServiceCategory } from '../../data/services'
+import { useServices } from '../../hooks/useServices'
 import SectionHeading from '../ui/SectionHeading'
 
 const getIcon = (iconName: string) => {
   return (Icons as any)[iconName] || Icons.Code2
 }
 
-
+/** Returns "6 service areas" / "1 service area" from a live count */
+function serviceHeading(count: number): string {
+  if (count === 0) return 'Our service areas. One trusted partner.'
+  return `${count} service area${count !== 1 ? 's' : ''}. One trusted partner.`
+}
 
 export default function ServicesGrid() {
-  const [dbServices, setDbServices] = useState<ServiceCategory[]>([])
-
-  useEffect(() => {
-    loadServices()
-      .then(setDbServices)
-      .catch(() => {})
-  }, [])
+  const dbServices = useServices()   // shared cached hook — no extra network call
 
   const displayServices = dbServices.map(s => ({
-        iconName: s.icon,
-        title: s.title,
-        description: s.description,
-        slug: s.slug,
-        borderAccent: s.detail.borderAccent,
-        textAccent: s.detail.textAccent,
-      }))
+    iconName:     s.icon,
+    title:        s.title,
+    description:  s.description,
+    slug:         s.slug,
+    borderAccent: s.detail.borderAccent,
+    textAccent:   s.detail.textAccent,
+  }))
 
   return (
     <section className="section-padding bg-white">
@@ -38,7 +34,7 @@ export default function ServicesGrid() {
           <SectionHeading
             align="left"
             eyebrow="What We Do"
-            title="Six service areas. One trusted partner."
+            title={serviceHeading(dbServices.length)}
             description="From building your website to training your team — ManuelTECH covers the full technology spectrum."
           />
           <Link

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import SectionHeading from '../ui/SectionHeading'
+import { useServices, numberToWord } from '../../hooks/useServices'
 
 const testimonials = [
   {
@@ -31,7 +32,7 @@ const testimonials = [
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80',
   },
   {
-    quote: 'Our brand identity went from generic to world-class. The UI/UX redesign increased user retention by 40%. Incredible creative team.',
+    quote: 'Our new brand identity completely changed how clients perceive us. The pitch deck designs helped us secure our Series A funding.',
     name: 'Fatima Diallo',
     role: 'Product Manager, FinEdge',
     service: 'Creative Services',
@@ -47,13 +48,14 @@ const testimonials = [
 ]
 
 export default function Testimonials() {
+  const services = useServices()
   return (
     <section className="section-padding bg-muted">
       <div className="container-wide">
         <SectionHeading
           eyebrow="Client Stories"
           title="Trusted by leaders across industries"
-          description="Real results from real clients — across all six of our service areas."
+          description={`Real results from real clients — across all ${numberToWord(services.length)} of our service areas.`}
         />
 
         <div className="mt-12 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">

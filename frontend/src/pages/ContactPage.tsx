@@ -6,6 +6,7 @@ import { submitContact, submitConsultation } from '../api/client'
 import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
 import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../admin/aboutStore'
+import { useServices } from '../hooks/useServices'
 
 type FormMode = 'contact' | 'consultation'
 
@@ -15,6 +16,7 @@ export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+  const services = useServices()
 
   const [contactForm, setContactForm] = useState({
     name: '', email: '', phone: '', subject: '', message: '',
@@ -225,12 +227,9 @@ export default function ContactPage() {
                         <label className="mb-1.5 block text-sm font-medium text-slate-700">Service Interest</label>
                         <select className={inputClass} value={consultForm.serviceInterest} onChange={(e) => setConsultForm({ ...consultForm, serviceInterest: e.target.value })}>
                           <option value="">Select a service</option>
-                          <option value="web">Web Development</option>
-                          <option value="software">Software & App Development</option>
-                          <option value="ai">AI & Automation Agents</option>
-                          <option value="creative">Creative Services</option>
-                          <option value="robotics">Robotics</option>
-                          <option value="training">Training & Education</option>
+                          {services.map((s) => (
+                            <option key={s.slug} value={s.slug}>{s.title}</option>
+                          ))}
                         </select>
                       </div>
                       <div>

@@ -1,18 +1,23 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Globe, Code2, Brain, Palette, Bot, GraduationCap } from 'lucide-react'
+import * as Icons from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Button from '../ui/Button'
 import SectionHeading from '../ui/SectionHeading'
+import { useServices } from '../../hooks/useServices'
 
-const pillars = [
-  { icon: Globe, label: 'Web Development' },
-  { icon: Code2, label: 'Software & Apps' },
-  { icon: Brain, label: 'AI & Automation' },
-  { icon: Palette, label: 'Creative Services' },
-  { icon: Bot, label: 'Robotics' },
-  { icon: GraduationCap, label: 'Training' },
-]
+const getIcon = (iconName: string) => (Icons as any)[iconName] || Icons.Code2
 
 export default function AboutIntro() {
+  const pillars = useServices()
+
+  // Dynamically join service titles to make the description 100% real-time
+  const servicesList = pillars.length > 0
+    ? pillars.map(p => p.title).slice(0, -1).join(', ') + ', and ' + pillars[pillars.length - 1].title
+    : 'Web Development, Software & App Development, AI & Automation Agents, Creative Services, Robotics, and Training & Education'
+
+  const description = `ManuelTECH delivers ${servicesList.toLowerCase().replace('ai', 'AI')} — everything your organization needs to compete and grow in a digital-first world.`
+
   return (
     <section className="section-padding bg-white">
       <div className="container-wide">
@@ -22,20 +27,23 @@ export default function AboutIntro() {
               align="left"
               eyebrow="Who We Are"
               title="A full-service technology company built for real outcomes"
-              description="ManuelTECH delivers web development, custom software, AI agents, automation, robotics, creative design, and hands-on training — everything your organization needs to compete and grow in a digital-first world."
+              description={description}
             />
 
             {/* Service pillars */}
             <div className="mt-8 grid grid-cols-3 gap-3">
-              {pillars.map((p) => (
-                <div
-                  key={p.label}
-                  className="flex flex-col items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-4 text-center"
-                >
-                  <p.icon size={20} className="text-primary-600" />
-                  <span className="text-xs font-medium leading-tight text-navy-900">{p.label}</span>
-                </div>
-              ))}
+              {pillars.map((p) => {
+                const PIcon = getIcon(p.icon)
+                return (
+                  <div
+                    key={p.slug}
+                    className="flex flex-col items-center gap-2 rounded-xl border border-border bg-muted/50 px-3 py-4 text-center"
+                  >
+                    <PIcon size={20} className="text-primary-600" />
+                    <span className="text-xs font-medium leading-tight text-navy-900">{p.title}</span>
+                  </div>
+                )
+              })}
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">

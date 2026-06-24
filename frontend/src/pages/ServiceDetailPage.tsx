@@ -4,24 +4,26 @@ import { motion } from 'framer-motion'
 import * as Icons from 'lucide-react'
 import { ArrowRight, ArrowLeft, CheckCircle2, Users, Layers, Loader2 } from 'lucide-react'
 import type { ServiceCategory } from '../data/services'
-import { loadServices } from '../admin/serviceStore'
+import { useServices } from '../hooks/useServices'
 import CTABand from '../components/home/CTABand'
 
 export default function ServiceDetailPage() {
   const { slug }   = useParams<{ slug: string }>()
   const navigate   = useNavigate()
+  const cats       = useServices()
   const [service, setService]   = useState<ServiceCategory | null>(null)
   const [related, setRelated]   = useState<ServiceCategory[]>([])
   const [loading, setLoading]   = useState(true)
 
   useEffect(() => {
-    loadServices().then((cats) => {
+    if (cats.length > 0) {
       const found = cats.find((s) => s.slug === slug)
       if (!found) { navigate('/services', { replace: true }); return }
       setService(found)
       setRelated(cats.filter((s) => found.detail.relatedIds.some(rid => s.slug.includes(rid) || s.id.includes(rid))).slice(0, 3))
-    }).finally(() => setLoading(false))
-  }, [slug, navigate])
+      setLoading(false)
+    }
+  }, [slug, navigate, cats])
 
   if (loading) return (
     <div className="flex min-h-[60vh] items-center justify-center gap-3 text-slate-400">

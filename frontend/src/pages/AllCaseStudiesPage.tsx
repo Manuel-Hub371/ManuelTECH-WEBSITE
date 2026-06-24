@@ -5,26 +5,13 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react'
 import type { CaseStudy } from '../data/products'
 import { loadCaseStudies } from '../admin/caseStudyStore'
 import CTABand from '../components/home/CTABand'
-
-const categoryColors: Record<string, string> = {
-  'Web Development':      'bg-sky-50 text-sky-700',
-  'Software Development': 'bg-primary-50 text-primary-700',
-  'AI & Automation':      'bg-violet-50 text-violet-700',
-  'Creative Services':    'bg-rose-50 text-rose-700',
-  'Robotics':             'bg-amber-50 text-amber-700',
-  'Training & Education': 'bg-emerald-50 text-emerald-700',
-}
-
-const accentLeft: Record<string, string> = {
-  'Web Development':      'border-l-sky-500',
-  'Software Development': 'border-l-primary-600',
-  'AI & Automation':      'border-l-violet-600',
-  'Creative Services':    'border-l-rose-500',
-  'Robotics':             'border-l-amber-500',
-  'Training & Education': 'border-l-emerald-500',
-}
+import { useServices, buildCategoryColorMap, buildBorderAccentMap } from '../hooks/useServices'
 
 export default function AllCaseStudiesPage() {
+  const services = useServices()
+  const categoryColors = buildCategoryColorMap(services)
+  const accentLeft = buildBorderAccentMap(services)
+
   const [studies, setStudies] = useState<CaseStudy[]>([])
   const [loading, setLoading] = useState(true)
 

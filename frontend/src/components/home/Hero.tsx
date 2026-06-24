@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Globe, Code2, Brain, Palette, Bot, GraduationCap } from 'lucide-react'
+import * as Icons from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
+import { useServices } from '../../hooks/useServices'
 
-const services = [
-  { icon: Globe,         label: 'Web Development' },
-  { icon: Code2,         label: 'Software & Apps' },
-  { icon: Brain,         label: 'AI & Automation' },
-  { icon: Palette,       label: 'Creative Services' },
-  { icon: Bot,           label: 'Robotics' },
-  { icon: GraduationCap, label: 'Training' },
-]
+const getIcon = (iconName: string) => (Icons as any)[iconName] || Icons.Code2
 
 export default function Hero() {
   const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+  const services        = useServices()   // cached — instant if already fetched
 
   useEffect(() => {
     loadCompanyInfo().then(setInfo).catch(() => {})
@@ -111,15 +107,18 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.36 }}
             className="mt-12 flex flex-wrap gap-2"
           >
-            {services.map((s) => (
-              <span
-                key={s.label}
-                className="inline-flex items-center gap-1.5 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300"
-              >
-                <s.icon size={12} className="text-primary-400" />
-                {s.label}
-              </span>
-            ))}
+            {services.map((s) => {
+              const IconComp = getIcon(s.icon)
+              return (
+                <span
+                  key={s.slug}
+                  className="inline-flex items-center gap-1.5 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300"
+                >
+                  <IconComp size={12} className="text-primary-400" />
+                  {s.title}
+                </span>
+              )
+            })}
           </motion.div>
         </div>
 

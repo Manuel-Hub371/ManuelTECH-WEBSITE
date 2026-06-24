@@ -3,15 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, Save, Eye, Star, Plus, Trash2, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 import { loadPosts, createPost, updatePost, slugify } from '../blogStore'
 import type { BlogPost } from '../../data/blog'
-
-const CATEGORIES = [
-  'AI & Automation',
-  'Software Development',
-  'Web Development',
-  'Robotics',
-  'Creative Services',
-  'Training & Education',
-]
+import { loadServices } from '../serviceStore'
 
 const AUTHORS = [
   { name: 'Manuel',       role: 'Founder & CEO',          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80' },
@@ -47,6 +39,11 @@ export default function BlogEditorPage() {
   const { id }    = useParams<{ id: string }>()
   const navigate  = useNavigate()
   const isEdit    = Boolean(id)
+  const [categories, setCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    loadServices().then((svcs) => setCategories(svcs.map((s) => s.title))).catch(() => {})
+  }, [])
 
   const [form, setForm]       = useState<Omit<BlogPost, 'id' | 'slug'>>(empty)
   const [tagInput, setTagInput] = useState('')
@@ -339,7 +336,7 @@ export default function BlogEditorPage() {
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className={inputClass()}
                 >
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
 

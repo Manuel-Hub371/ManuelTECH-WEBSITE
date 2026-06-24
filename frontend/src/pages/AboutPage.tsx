@@ -1,36 +1,29 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import * as Icons from 'lucide-react'
 import {
-  ArrowRight, Globe, Code2, Brain, Palette, Bot, GraduationCap,
+  ArrowRight,
   CheckCircle2, MapPin, Users, Briefcase, Award,
   Link2, AtSign, Camera, Phone,
   Mail, MessageCircle,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { coreValues, loadCompanyInfo, loadTeamMembers, defaultCompanyInfo, type CompanyInfoData, type TeamMemberData } from '../admin/aboutStore'
+import { useServices, numberToWord } from '../hooks/useServices'
 import CTABand from '../components/home/CTABand'
 
 /* ─── static data ───────────────────────────────────────────────── */
-const milestones = [
+const getMilestones = (serviceCount: number) => [
   { year: '2016', title: 'Founded',           desc: 'ManuelTECH started as a freelance software studio, building custom systems for local businesses and schools.' },
   { year: '2018', title: 'First Enterprise Client', desc: 'Delivered a full hospital management system — our first large-scale enterprise deployment across multiple departments.' },
   { year: '2020', title: 'AI Division Launched',    desc: 'Expanded into AI chatbots, automation agents, and machine learning solutions as demand for intelligent systems grew.' },
   { year: '2022', title: 'Robotics Lab Opened',     desc: 'Launched our robotics R&D lab, building smart gate systems, security robots, and autonomous patrol units.' },
   { year: '2023', title: 'Training Academy',        desc: 'Launched structured training programs for individuals, corporate teams, and institutions — taught by our own engineers.' },
-  { year: '2024', title: 'Regional Expansion',      desc: 'Now serving clients across 5 countries with a growing team of 20+ specialists across six service disciplines.' },
+  { year: '2024', title: 'Regional Expansion',      desc: `Now serving clients across 5 countries with a growing team of 20+ specialists across ${serviceCount > 0 ? numberToWord(serviceCount) : 'six'} service disciplines.` },
 ]
 
-const serviceAreas = [
-  { icon: Globe,         label: 'Web Development',      border: 'border-l-sky-500' },
-  { icon: Code2,         label: 'Software & Apps',      border: 'border-l-primary-600' },
-  { icon: Brain,         label: 'AI & Automation',      border: 'border-l-violet-600' },
-  { icon: Palette,       label: 'Creative Services',    border: 'border-l-rose-500' },
-  { icon: Bot,           label: 'Robotics',             border: 'border-l-amber-500' },
-  { icon: GraduationCap, label: 'Training & Education', border: 'border-l-emerald-500' },
-]
-
-const differentiators = [
-  'Six service areas under one roof — no vendor juggling',
+const differentiators = (serviceCount: number) => [
+  `${serviceCount > 0 ? numberToWord(serviceCount, true) : 'Six'} service areas under one roof — no vendor juggling`,
   'Dedicated project teams, not rotating contractors',
   'We train your team alongside building your product',
   'Post-launch support included in every engagement',
@@ -58,8 +51,9 @@ function socialHref(key: keyof TeamMemberData, val: string): string {
 
 /* ─── Page ──────────────────────────────────────────────────────── */
 export default function AboutPage() {
-  const [info, setInfo]       = useState<CompanyInfoData>(defaultCompanyInfo)
-  const [members, setMembers] = useState<TeamMemberData[]>([])
+  const [info, setInfo]           = useState<CompanyInfoData>(defaultCompanyInfo)
+  const [members, setMembers]     = useState<TeamMemberData[]>([])
+  const services                  = useServices()
 
   useEffect(() => {
     loadCompanyInfo().then(setInfo)
@@ -148,12 +142,16 @@ export default function AboutPage() {
                 {info.storyParagraph3 && <p>{info.storyParagraph3}</p>}
               </div>
               <div className="mt-8 grid grid-cols-2 gap-px bg-border border border-border sm:grid-cols-3">
-                {serviceAreas.map((s) => (
-                  <div key={s.label} className={`flex items-center gap-2.5 border-l-4 bg-white px-4 py-3.5 ${s.border}`}>
-                    <s.icon size={15} className="shrink-0 text-navy-700" />
-                    <span className="text-xs font-semibold text-navy-900">{s.label}</span>
-                  </div>
-                ))}
+                {services.map((s) => {
+                  const IconComp = (Icons as any)[s.icon] || Icons.Code2
+                  const border = s.detail.borderAccent || 'border-l-primary-600'
+                  return (
+                    <div key={s.slug} className={`flex items-center gap-2.5 border-l-4 bg-white px-4 py-3.5 ${border}`}>
+                      <IconComp size={15} className="shrink-0 text-navy-700" />
+                      <span className="text-xs font-semibold text-navy-900">{s.title}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -194,7 +192,7 @@ export default function AboutPage() {
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">Our Journey</span>
           </div>
           <div className="grid gap-0 border border-border lg:grid-cols-3">
-            {milestones.map((m, i) => (
+            {getMilestones(services.length).map((m, i) => (
               <motion.div key={m.year}
                 initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
                 className="relative border-b border-r border-border bg-white p-8 last:border-b-0 lg:border-b-0 lg:[&:nth-child(3n)]:border-r-0">
@@ -258,7 +256,7 @@ export default function AboutPage() {
                 What makes {info.companyName} different.
               </h2>
               <ul className="mt-8 space-y-0 border border-white/10">
-                {differentiators.map((point, i) => (
+                {differentiators(services.length).map((point, i) => (
                   <motion.li key={point}
                     initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
                     className="flex items-start gap-4 border-b border-white/10 px-6 py-4 last:border-0">
