@@ -1,14 +1,9 @@
-import { useState, useEffect } from 'react'
 import { ArrowRight, Phone, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
+import { useCompanyInfo } from '../../hooks/useCompanyInfo'
 
 export default function CTABand() {
-  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
-
-  useEffect(() => {
-    loadCompanyInfo().then(setInfo).catch(() => {})
-  }, [])
+  const info = useCompanyInfo()  // null while loading — never shows static defaults
 
   return (
     <section className="bg-navy-900">
@@ -40,7 +35,7 @@ export default function CTABand() {
               Book Free Consultation <ArrowRight size={18} />
             </Link>
             <div className="flex flex-wrap gap-4">
-              {info.contactPhone && (
+              {info?.contactPhone && (
                 <a
                   href={`tel:${info.contactPhone.replace(/[^\d+]/g, '')}`}
                   className="inline-flex items-center gap-2 rounded border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
@@ -49,7 +44,7 @@ export default function CTABand() {
                   Call Us
                 </a>
               )}
-              {info.contactWhatsapp && (
+              {info?.contactWhatsapp && (
                 <a
                   href={info.contactWhatsapp}
                   target="_blank"

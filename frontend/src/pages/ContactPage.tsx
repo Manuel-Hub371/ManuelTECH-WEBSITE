@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, MessageCircle, Calendar, CheckCircle, AlertCircle,
 import { submitContact, submitConsultation } from '../api/client'
 import PageHeader from '../components/ui/PageHeader'
 import Button from '../components/ui/Button'
-import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../admin/aboutStore'
+import { useCompanyInfo } from '../hooks/useCompanyInfo'
 import { useServices } from '../hooks/useServices'
 
 type FormMode = 'contact' | 'consultation'
@@ -15,8 +15,12 @@ export default function ContactPage() {
   const [mode, setMode] = useState<FormMode>('contact')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+  const info     = useCompanyInfo()  // null while loading — never shows static defaults
   const services = useServices()
+
+  if (!info || services.length === 0) {
+    return null
+  }
 
   const [contactForm, setContactForm] = useState({
     name: '', email: '', phone: '', subject: '', message: '',
@@ -27,7 +31,6 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (searchParams.get('consultation') === 'true') setMode('consultation')
-    loadCompanyInfo().then(setInfo)
   }, [searchParams])
 
   const inputClass =
@@ -61,13 +64,14 @@ export default function ContactPage() {
     }
   }
 
+  // Only show contact details that exist in the DB — no hardcoded fallbacks
   const contactInfo = [
-    { icon: Mail,          label: 'Email',          value: info.contactEmail    || 'hello@manueltech.com',          href: info.contactEmail    ? `mailto:${info.contactEmail}`    : 'mailto:hello@manueltech.com' },
-    { icon: Phone,         label: 'Phone',          value: info.contactPhone    || 'Not provided',              href: info.contactPhone    ? `tel:${info.contactPhone}`        : undefined },
-    { icon: MessageCircle, label: 'WhatsApp',       value: 'Chat with us',                                         href: info.contactWhatsapp || undefined },
-    { icon: Clock,         label: 'Business Hours', value: info.businessHours   || 'Mon – Fri, 9:00 AM – 6:00 PM', href: undefined },
-    { icon: MapPin,        label: 'Office',         value: info.contactLocation || 'Tech Innovation Hub, Your City',href: undefined },
-  ]
+    info?.contactEmail    ? { icon: Mail,          label: 'Email',          value: info.contactEmail,    href: `mailto:${info.contactEmail}` }    : null,
+    info?.contactPhone    ? { icon: Phone,         label: 'Phone',          value: info.contactPhone,    href: `tel:${info.contactPhone}` }        : null,
+    info?.contactWhatsapp ? { icon: MessageCircle, label: 'WhatsApp',       value: 'Chat with us',       href: info.contactWhatsapp }              : null,
+    info?.businessHours   ? { icon: Clock,         label: 'Business Hours', value: info.businessHours,   href: undefined }                         : null,
+    info?.contactLocation ? { icon: MapPin,        label: 'Office',         value: info.contactLocation, href: undefined }                         : null,
+  ].filter(Boolean) as { icon: React.ElementType; label: string; value: string; href: string | undefined }[]
 
   return (
     <>
@@ -106,11 +110,11 @@ export default function ContactPage() {
                 ))}
               </ul>
 
-              {info.contactMapEmbed && (
+              {info?.contactMapEmbed && (
                 <div className="mt-10 overflow-hidden rounded-2xl border border-border shadow-sm">
                   <iframe
                     title="ManuelTECH office location"
-                    src={info.contactMapEmbed || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9663095343!2d-74.004258!3d40.740162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ0JzI0LjYiTiA3NMKwMDAnMTUuMyJX!5e0!3m2!1sen!2sus!4v1234567890'}
+                    src={info.contactMapEmbed}
                     width="100%"
                     height="240"
                     style={{ border: 0 }}

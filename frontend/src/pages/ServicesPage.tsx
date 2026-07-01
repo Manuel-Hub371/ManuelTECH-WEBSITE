@@ -4,7 +4,7 @@ import * as Icons from 'lucide-react'
 import { ArrowRight, CheckCircle2, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useServices } from '../hooks/useServices'
-import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../admin/aboutStore'
+import { useCompanyInfo } from '../hooks/useCompanyInfo'
 import type { ServiceCategory } from '../data/services'
 import CTABand from '../components/home/CTABand'
 const getIcon = (iconName: string) => {
@@ -80,7 +80,7 @@ function MobileNav({ serviceCategories }: { serviceCategories: ServiceCategory[]
 }
 
 /* ─── Individual service section ────────────────────────────────── */
-function ServiceSection({ category, index, info }: { category: ServiceCategory; index: number; info: CompanyInfoData }) {
+function ServiceSection({ category, index, info }: { category: ServiceCategory; index: number; info: import('../admin/aboutStore').CompanyInfoData | null }) {
   const IconComponent = ((Icons as any)[category.icon] || Icons.Code2) as React.ComponentType<{ size?: number; className?: string }>
   const accent = {
     border: category.detail.borderAccent || 'border-l-primary-600',
@@ -144,7 +144,7 @@ function ServiceSection({ category, index, info }: { category: ServiceCategory; 
             >
               Get a Quote
             </Link>
-            {info.contactPhone && (
+            {info?.contactPhone && (
               <a
                 href={`tel:${info.contactPhone.replace(/[^\d+]/g, '')}`}
                 className="inline-flex items-center gap-2 rounded border border-border px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-navy-900 hover:text-navy-900"
@@ -190,12 +190,13 @@ function ServiceSection({ category, index, info }: { category: ServiceCategory; 
 export default function ServicesPage() {
   const serviceCategories = useServices()
   const [activeSection, setActiveSection] = useState('')
-  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+  const info = useCompanyInfo()  // null while loading — never shows static defaults
   const observerRef = useRef<IntersectionObserver | null>(null)
 
-  useEffect(() => {
-    loadCompanyInfo().then(setInfo).catch(() => {})
-  }, [])
+  if (!info || serviceCategories.length === 0) {
+    return null
+  }
+
 
   useEffect(() => {
     if (serviceCategories.length && !activeSection) {
@@ -286,11 +287,11 @@ export default function ServicesPage() {
         <div className="container-wide">
           <div className="grid gap-px bg-border border border-border sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { value: info.statProjects || '50+', label: 'Projects Delivered', sub: 'Across all service areas' },
+              info?.statProjects ? { value: info.statProjects, label: 'Projects Delivered', sub: 'Across all service areas' } : null,
               { value: '98%', label: 'Client Satisfaction', sub: 'Based on post-project surveys' },
               { value: '48h', label: 'Quote Turnaround', sub: 'From brief to detailed proposal' },
-              { value: info.statYears ? `${info.statYears} Yrs` : '8+ Yrs', label: 'Experience', sub: `Serving clients in ${info.statCountries || '5'} countries` },
-            ].map((stat) => (
+              info?.statYears    ? { value: `${info.statYears} Yrs`, label: 'Experience', sub: info.statCountries ? `Serving clients in ${info.statCountries} countries` : 'Across global markets' } : null,
+            ].filter(Boolean).map((stat: any) => (
               <div key={stat.label} className="bg-white px-8 py-8">
                 <p className="font-display text-4xl font-bold text-navy-900">{stat.value}</p>
                 <p className="mt-1 text-sm font-bold text-navy-900">{stat.label}</p>

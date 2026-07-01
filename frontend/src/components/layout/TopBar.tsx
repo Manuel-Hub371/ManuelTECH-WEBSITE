@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react'
 import { Mail, Phone, MessageCircle } from 'lucide-react'
-import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
+import { useCompanyInfo } from '../../hooks/useCompanyInfo'
 
 export default function TopBar() {
-  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
+  const info = useCompanyInfo()  // null while loading — never shows static defaults
 
-  useEffect(() => {
-    loadCompanyInfo().then(setInfo).catch(() => {/* keep defaults */})
-  }, [])
+  // Don't render the bar at all until company info is loaded
+  if (!info) return null
+
+  // If no contact details exist in the database, hide the bar
+  if (!info.contactEmail && !info.contactPhone && !info.contactWhatsapp) return null
 
   return (
     <div className="hidden border-b border-white/10 bg-navy-950 lg:block">
       <div className="container-wide flex items-center justify-between py-2.5 text-xs text-slate-400">
         <p>
-          Web · Software · AI · Creative · Robotics · Training —{' '}
-          <span className="text-slate-300">all under one roof</span>
+          ManuelTECH — all under one roof
         </p>
         <div className="flex items-center gap-6">
           {info.contactEmail && (

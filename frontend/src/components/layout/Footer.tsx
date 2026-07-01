@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, MessageCircle, Share2, Rss, Globe, Link2, AtSign, Camera } from 'lucide-react'
 import Logo from '../ui/Logo'
-import { loadCompanyInfo, defaultCompanyInfo, type CompanyInfoData } from '../../admin/aboutStore'
+import { useCompanyInfo } from '../../hooks/useCompanyInfo'
 import { useServices } from '../../hooks/useServices'
 import type { ServiceCategory } from '../../data/services'
 
@@ -15,28 +15,23 @@ const companyLinks = [
 ]
 
 export default function Footer() {
-  const [info, setInfo] = useState<CompanyInfoData>(defaultCompanyInfo)
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const info     = useCompanyInfo()  // null while loading — never shows static defaults
   const services = useServices()
-
   const serviceLinks = services.map((s: ServiceCategory) => ({
     label: s.title,
     to: `/services/${s.slug}`,
   }))
 
-  useEffect(() => {
-    loadCompanyInfo().then(setInfo)
-  }, [])
-
   /* Build social links from store — only show ones that have a URL */
   const socialLinks = [
-    { icon: Link2,         href: info.socialLinkedin,  label: 'LinkedIn'    },
-    { icon: AtSign,        href: info.socialTwitter,   label: 'Twitter / X' },
-    { icon: Camera,        href: info.socialInstagram, label: 'Instagram'   },
-    { icon: Share2,        href: info.socialFacebook,  label: 'Facebook'    },
-    { icon: Rss,           href: info.socialYoutube,   label: 'YouTube'     },
-    { icon: Globe,         href: info.socialGithub,    label: 'GitHub'      },
+    { icon: Link2,         href: info?.socialLinkedin,  label: 'LinkedIn'    },
+    { icon: AtSign,        href: info?.socialTwitter,   label: 'Twitter / X' },
+    { icon: Camera,        href: info?.socialInstagram, label: 'Instagram'   },
+    { icon: Share2,        href: info?.socialFacebook,  label: 'Facebook'    },
+    { icon: Rss,           href: info?.socialYoutube,   label: 'YouTube'     },
+    { icon: Globe,         href: info?.socialGithub,    label: 'GitHub'      },
   ].filter((s) => s.href)
 
   return (
@@ -50,7 +45,7 @@ export default function Footer() {
             <p className="mt-5 max-w-sm text-sm leading-relaxed">
               ManuelTECH delivers {services.length > 0
                 ? services.map(s => s.title.toLowerCase().replace('ai', 'AI')).slice(0, -1).join(', ') + ', and ' + services[services.length - 1].title.toLowerCase().replace('ai', 'AI')
-                : 'web development, custom software, AI agents, automation, robotics, creative design, and technology training'
+                : null
               } — everything your organization needs to grow.
             </p>
             {socialLinks.length > 0 && (
@@ -99,25 +94,25 @@ export default function Footer() {
           <div className="lg:col-span-3">
             <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-white">Get in Touch</h4>
             <ul className="space-y-3 text-sm">
-              {info.contactEmail && (
+              {info?.contactEmail && (
                 <li className="flex gap-3">
                   <Mail size={15} className="mt-0.5 shrink-0 text-primary-500" />
                   <a href={`mailto:${info.contactEmail}`} className="transition hover:text-white">{info.contactEmail}</a>
                 </li>
               )}
-              {info.contactPhone && (
+              {info?.contactPhone && (
                 <li className="flex gap-3">
                   <Phone size={15} className="mt-0.5 shrink-0 text-primary-500" />
                   <a href={`tel:${info.contactPhone}`} className="transition hover:text-white">{info.contactPhone}</a>
                 </li>
               )}
-              {info.contactWhatsapp && (
+              {info?.contactWhatsapp && (
                 <li className="flex gap-3">
                   <MessageCircle size={15} className="mt-0.5 shrink-0 text-emerald-500" />
                   <a href={info.contactWhatsapp} target="_blank" rel="noreferrer" className="transition hover:text-white">WhatsApp Us</a>
                 </li>
               )}
-              {info.contactLocation && (
+              {info?.contactLocation && (
                 <li className="flex gap-3">
                   <MapPin size={15} className="mt-0.5 shrink-0 text-primary-500" />
                   <span>{info.contactLocation}</span>
@@ -166,7 +161,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="container-wide flex flex-col items-center justify-between gap-3 py-5 sm:flex-row">
-          <p className="text-xs text-slate-500">© {new Date().getFullYear()} {info.companyName || 'ManuelTECH'}. All rights reserved.</p>
+          <p className="text-xs text-slate-500">© {new Date().getFullYear()} {info?.companyName || 'ManuelTECH'}. All rights reserved.</p>
           <div className="flex gap-5 text-xs text-slate-500">
             <Link to="/privacy" className="transition hover:text-white">Privacy Policy</Link>
             <Link to="/terms" className="transition hover:text-white">Terms of Service</Link>

@@ -2,10 +2,11 @@
  * Shared hook – fetches services once and caches them in a module-level
  * variable so every component that calls this in the same session reuses
  * the same data without extra network requests.
+ *
+ * Rule: NEVER fall back to static data. If the API fails the list stays [].
  */
 import { useState, useEffect } from 'react'
 import { loadServices } from '../admin/serviceStore'
-import { serviceCategories } from '../data/services'
 import type { ServiceCategory } from '../data/services'
 
 let _cache: ServiceCategory[] | null = null
@@ -31,13 +32,8 @@ export function useServices(): ServiceCategory[] {
   const [services, setServices] = useState<ServiceCategory[]>(_cache ?? [])
   useEffect(() => {
     const unsub = subscribe(setServices)
-    ensureLoaded()
-      .then(setServices)
-      .catch(() => {
-        if (_cache === null) {
-          setServices(serviceCategories)
-        }
-      })
+    // On error keep empty array — never show static fallback data
+    ensureLoaded().then(setServices).catch(() => {})
     return unsub
   }, [])
   return services

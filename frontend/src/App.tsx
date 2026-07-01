@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import ServicesPage from './pages/ServicesPage'
@@ -7,7 +7,6 @@ import AboutPage from './pages/AboutPage'
 import ProductsPage from './pages/ProductsPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import AllProductsPage from './pages/AllProductsPage'
-import AllProjectsPage from './pages/AllProjectsPage'
 import AllCaseStudiesPage from './pages/AllCaseStudiesPage'
 import CaseStudyPage from './pages/CaseStudyPage'
 import BlogPage from './pages/BlogPage'
@@ -53,7 +52,7 @@ export default function App() {
           <Route path="/portfolio" element={<ProductsPage />} />
           <Route path="/portfolio/products" element={<AllProductsPage />} />
           <Route path="/portfolio/case-studies" element={<AllCaseStudiesPage />} />
-          <Route path="/portfolio/projects" element={<AllProjectsPage />} />
+          <Route path="/portfolio/projects" element={<Navigate to="/portfolio" replace />} />
           <Route path="/portfolio/case-study/:id" element={<CaseStudyPage />} />
           <Route path="/portfolio/:id" element={<ProductDetailPage />} />
 

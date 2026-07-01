@@ -8,7 +8,8 @@ import {
   Mail, MessageCircle, Code2, Globe
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { coreValues, loadCompanyInfo, loadTeamMembers, defaultCompanyInfo, type CompanyInfoData, type TeamMemberData } from '../admin/aboutStore'
+import { coreValues, loadTeamMembers, type TeamMemberData } from '../admin/aboutStore'
+import { useCompanyInfo, } from '../hooks/useCompanyInfo'
 import { useServices, numberToWord } from '../hooks/useServices'
 import CTABand from '../components/home/CTABand'
 
@@ -51,21 +52,24 @@ function socialHref(key: keyof TeamMemberData, val: string): string {
 
 /* ─── Page ──────────────────────────────────────────────────────── */
 export default function AboutPage() {
-  const [info, setInfo]           = useState<CompanyInfoData>(defaultCompanyInfo)
-  const [members, setMembers]     = useState<TeamMemberData[]>([])
-  const services                  = useServices()
+  const info                          = useCompanyInfo()  // null while loading
+  const [members, setMembers]         = useState<TeamMemberData[]>([])
+  const services                      = useServices()
 
   useEffect(() => {
-    loadCompanyInfo().then(setInfo)
     loadTeamMembers().then(setMembers)
   }, [])
 
-  const stats = [
+  if (!info || services.length === 0) {
+    return null
+  }
+
+  const stats = info ? [
     { value: info.statYears,     label: 'Years in Business', icon: Briefcase },
     { value: info.statProjects,  label: 'Projects Delivered', icon: Award },
     { value: info.statClients,   label: 'Clients Worldwide',  icon: Users },
     { value: info.statCountries, label: 'Countries Served',   icon: MapPin },
-  ]
+  ] : []
 
   return (
     <>
@@ -79,14 +83,14 @@ export default function AboutPage() {
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <div className="mb-5 flex items-center gap-3">
                 <span className="h-0.5 w-8 bg-primary-500" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-400">About {info.companyName}</span>
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-400">About {info?.companyName}</span>
               </div>
               <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
-                {info.tagline.split('.').map((line, i) => (
-                  <span key={i}>{line.trim()}{i < info.tagline.split('.').length - 2 ? '.' : ''}<br /></span>
+                {info?.tagline?.split('.').map((line: string, i: number) => (
+                  <span key={i}>{line.trim()}{i < (info?.tagline?.split('.').length ?? 0) - 2 ? '.' : ''}<br /></span>
                 ))}
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-300">{info.heroDescription}</p>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-300">{info?.heroDescription}</p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to="/contact?consultation=true"
                   className="inline-flex items-center gap-2 rounded bg-primary-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-700">
@@ -118,9 +122,9 @@ export default function AboutPage() {
         <div className="container-wide">
           <div className="grid items-start gap-16 lg:grid-cols-2">
             <motion.div initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
-              <img src={info.storyImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80'}
+              <img src={info?.storyImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80'}
                 alt="ManuelTECH team" className="w-full object-cover shadow-lg" />
-              {info.founderQuote && (
+              {info?.founderQuote && (
                 <div className="absolute -bottom-0 left-0 right-0 border-l-4 border-primary-600 bg-navy-900 px-6 py-5">
                   <p className="font-display text-sm font-semibold leading-snug text-white">"{info.founderQuote}"</p>
                   <p className="mt-1.5 text-xs text-slate-400">— {info.founderName}</p>
@@ -137,9 +141,9 @@ export default function AboutPage() {
                 Built on engineering excellence and a passion for impact
               </h2>
               <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
-                {info.storyParagraph1 && <p>{info.storyParagraph1}</p>}
-                {info.storyParagraph2 && <p>{info.storyParagraph2}</p>}
-                {info.storyParagraph3 && <p>{info.storyParagraph3}</p>}
+                {info?.storyParagraph1 && <p>{info.storyParagraph1}</p>}
+                {info?.storyParagraph2 && <p>{info.storyParagraph2}</p>}
+                {info?.storyParagraph3 && <p>{info.storyParagraph3}</p>}
               </div>
               <div className="mt-8 grid grid-cols-2 gap-px bg-border border border-border sm:grid-cols-3">
                 {services.map((s) => {
@@ -168,7 +172,7 @@ export default function AboutPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">Our Mission</span>
               </div>
               <h2 className="font-display text-2xl font-bold leading-tight text-navy-900 sm:text-3xl">
-                {info.mission || 'Empower every organization with technology that actually works.'}
+                {info?.mission || ''}
               </h2>
             </div>
             <div className="bg-navy-900 p-10 lg:p-14">
@@ -177,7 +181,7 @@ export default function AboutPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary-400">Our Vision</span>
               </div>
               <h2 className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">
-                {info.vision || 'The most trusted technology partner for digital transformation.'}
+                {info?.vision || ''}
               </h2>
             </div>
           </div>
@@ -253,7 +257,7 @@ export default function AboutPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary-400">Why Choose Us</span>
               </div>
               <h2 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl">
-                What makes {info.companyName} different.
+                What makes {info?.companyName} different.
               </h2>
               <ul className="mt-8 space-y-0 border border-white/10">
                 {differentiators(services.length).map((point, i) => (
@@ -356,12 +360,14 @@ export default function AboutPage() {
           <div className="mt-px flex flex-col items-center justify-between gap-4 border border-border bg-muted px-8 py-6 sm:flex-row">
             <div>
               <p className="font-display font-bold text-navy-900">We're growing.</p>
-              <p className="text-sm text-muted-foreground">{info.hiringText || "Talented engineers, designers, and educators — we'd love to hear from you."}</p>
+              <p className="text-sm text-muted-foreground">{info?.hiringText || ''}</p>
             </div>
-            <a href={`mailto:${info.hiringEmail || 'careers@manueltech.com'}`}
-              className="shrink-0 inline-flex items-center gap-2 rounded bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-800">
-              View Open Roles <ArrowRight size={14} />
-            </a>
+            {info?.hiringEmail && (
+              <a href={`mailto:${info.hiringEmail}`}
+                className="shrink-0 inline-flex items-center gap-2 rounded bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-800">
+                View Open Roles <ArrowRight size={14} />
+              </a>
+            )}
           </div>
         </div>
       </section>

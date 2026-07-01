@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ExternalLink, CheckCircle2, Filter, Clock, Calendar } from 'lucide-react'
-import { completedProjects } from '../data/products'
+import { ArrowRight, ExternalLink, CheckCircle2, Clock, Calendar } from 'lucide-react'
 import type { Product, CaseStudy } from '../data/products'
 import type { BlogPost } from '../data/blog'
 import { loadProducts } from '../admin/productStore'
 import { loadCaseStudies } from '../admin/caseStudyStore'
 import { loadPosts } from '../admin/blogStore'
 import CTABand from '../components/home/CTABand'
-import { useServices, buildCategoryColorMap, numberToWord } from '../hooks/useServices'
+import { useServices, buildCategoryColorMap } from '../hooks/useServices'
+import { useCompanyInfo } from '../hooks/useCompanyInfo'
 
 /* ─── helpers ───────────────────────────────────────────────────── */
 const statusColors: Record<string, string> = {
@@ -20,24 +20,18 @@ const statusColors: Record<string, string> = {
 
 /* ─── Page ──────────────────────────────────────────────────────── */
 export default function ProductsPage() {
+  const info = useCompanyInfo()
   const services = useServices()
+
   // One map for all content that stores category by service title
   const categoryColors = buildCategoryColorMap(services)
   // For blog/case study badges use the same map
   const blogCategoryColors = categoryColors
-  // Project quick-filters: All + first word of each service title
-  const projectFilters = ['All', ...services.map((s) => s.title.split(' ')[0])]
-  // Project tile colour map keyed by first word
-  const projectCategoryColors: Record<string, string> = Object.fromEntries(
-    services.map((s) => {
-      const key = s.title.split(' ')[0]
-      const text = s.detail.textAccent   || 'text-primary-600'
-      const bg   = (s.detail.accentColor || 'bg-primary-600').replace(/\d+$/, '50')
-      return [key, `${text} ${bg}`]
-    })
-  )
 
-  const [projectFilter, setProjectFilter]     = useState('All')
+  if (!info || services.length === 0) {
+    return null
+  }
+
   const [portfolioProducts, setPortfolioProducts] = useState<Product[]>([])
   const [caseStudies, setCaseStudies]         = useState<CaseStudy[]>([])
   const [previewBlogPosts, setPreviewBlogPosts] = useState<BlogPost[]>([])
@@ -53,11 +47,6 @@ export default function ProductsPage() {
   }, [])
 
   const previewCaseStudies = caseStudies.slice(0, 3)
-
-  const filteredProjects =
-    projectFilter === 'All'
-      ? completedProjects.slice(0, 6)
-      : completedProjects.filter((p) => p.category === projectFilter).slice(0, 6)
 
   return (
     <>
@@ -82,10 +71,9 @@ export default function ProductsPage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               {[
-                { label: 'Our Products',      href: '#products' },
-                { label: 'Case Studies',       href: '#case-studies' },
-                { label: 'Completed Projects', href: '#projects' },
-                { label: 'Insights & Blog',    href: '#blog' },
+                { label: 'Our Products',   href: '#products' },
+                { label: 'Case Studies',   href: '#case-studies' },
+                { label: 'Insights & Blog', href: '#blog' },
               ].map((link) => (
                 <a key={link.label} href={link.href}
                   className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white">
@@ -287,83 +275,6 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════
-          SECTION 3 — COMPLETED PROJECTS
-      ══════════════════════════════════════════════════════════════ */}
-      <section id="projects" className="section-padding bg-white scroll-mt-20">
-        <div className="container-wide">
-          <div className="mb-10 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-            <div>
-              <div className="mb-4 flex items-center gap-3">
-                <span className="h-0.5 w-8 bg-primary-600" />
-                <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary-600">Completed Projects</span>
-              </div>
-              <h2 className="font-display text-3xl font-bold leading-tight text-navy-900 sm:text-4xl">
-                The broader body of work.
-              </h2>
-              <p className="mt-3 max-w-xl text-base text-muted-foreground">
-                A selection of client projects delivered across all {numberToWord(services.length)} service areas.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Filter size={14} className="text-muted-foreground" />
-              <div className="flex flex-wrap gap-1.5">
-                {projectFilters.map((f) => (
-                  <button key={f} type="button" onClick={() => setProjectFilter(f)}
-                    className={`rounded px-3 py-1.5 text-xs font-semibold transition ${
-                      projectFilter === f ? 'bg-navy-900 text-white' : 'border border-border text-slate-600 hover:border-navy-900 hover:text-navy-900'
-                    }`}>
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div key={projectFilter}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="grid gap-px bg-border border border-border sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {filteredProjects.map((project, i) => (
-                <motion.div key={project.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="flex flex-col bg-white p-7 transition hover:bg-muted"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className={`rounded px-2.5 py-1 text-xs font-bold ${projectCategoryColors[project.category] ?? 'bg-muted text-slate-600'}`}>
-                      {project.category}
-                    </span>
-                    <span className="text-xs font-medium text-muted-foreground">{project.year}</span>
-                  </div>
-                  <h3 className="mt-3 font-display font-bold text-navy-900">{project.title}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{project.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {project.techStack.map((t) => (
-                      <span key={t} className="rounded border border-border px-2 py-0.5 text-xs text-slate-500">{t}</span>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="mt-px flex flex-col items-center justify-between gap-4 border border-border bg-muted px-7 py-5 sm:flex-row">
-            <p className="text-sm text-muted-foreground">
-              Showing {filteredProjects.length} of {completedProjects.length} projects. Many are under NDA.
-            </p>
-            <Link to="/portfolio/projects"
-              className="shrink-0 inline-flex items-center gap-2 rounded bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-navy-800">
-              View All Projects <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 4 — BLOG / INSIGHTS
