@@ -39,7 +39,9 @@ export default function CaseStudies() {
             align="left"
             eyebrow="Case Studies"
             title="Real projects. Measurable results."
-            description={`A sample of what we've delivered across our ${numberToWord(services.length)} service areas.`}
+            description={services.length > 0
+              ? `A sample of what we've delivered across our ${numberToWord(services.length)} service areas.`
+              : "A sample of what we've delivered across our service areas."}
           />
           <Link
             to="/portfolio#case-studies"

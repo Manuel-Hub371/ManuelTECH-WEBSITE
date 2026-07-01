@@ -1,41 +1,48 @@
 import { motion } from 'framer-motion'
 import { ShieldCheck, Zap, Users2, LifeBuoy, Layers, GraduationCap } from 'lucide-react'
 import SectionHeading from '../ui/SectionHeading'
-
-const reasons = [
-  {
-    icon: Layers,
-    title: 'Full-Spectrum Capability',
-    description: 'Web, software, AI, design, robotics, and training — all under one roof. No need to juggle multiple vendors.',
-  },
-  {
-    icon: Zap,
-    title: 'Fast, Agile Delivery',
-    description: 'Focused sprints with regular demos so you see progress every week, not just at the end.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Built for the Long Term',
-    description: 'Clean architecture, thorough documentation, and scalable code your team can maintain and grow.',
-  },
-  {
-    icon: Users2,
-    title: 'Dedicated Project Teams',
-    description: 'A named project manager and engineers assigned to you — not a rotating pool of contractors.',
-  },
-  {
-    icon: LifeBuoy,
-    title: 'Post-Launch Support',
-    description: "We don't disappear after go-live. Maintenance, updates, and support are part of every engagement.",
-  },
-  {
-    icon: GraduationCap,
-    title: 'We Also Teach',
-    description: 'Beyond building, we train your team and the next generation of tech talent through structured programs.',
-  },
-]
+import { useServices } from '../../hooks/useServices'
 
 export default function WhyUs() {
+  const services = useServices()
+
+  // Dynamically build the services list for the description to ensure real-time accuracy
+  const servicesList = services.length > 0
+    ? services.map(s => s.title.split(' ')[0]).slice(0, -1).join(', ') + ', and ' + services[services.length - 1].title.split(' ')[0]
+    : 'web, software, AI, design, robotics, and training'
+
+  const reasons = [
+    {
+      icon: Layers,
+      title: 'Full-Spectrum Capability',
+      description: `${servicesList} — all under one roof. No need to juggle multiple vendors.`,
+    },
+    {
+      icon: Zap,
+      title: 'Fast, Agile Delivery',
+      description: 'Focused sprints with regular demos so you see progress every week, not just at the end.',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Built for the Long Term',
+      description: 'Clean architecture, thorough documentation, and scalable code your team can maintain and grow.',
+    },
+    {
+      icon: Users2,
+      title: 'Dedicated Project Teams',
+      description: 'A named project manager and engineers assigned to you — not a rotating pool of contractors.',
+    },
+    {
+      icon: LifeBuoy,
+      title: 'Post-Launch Support',
+      description: "We don't disappear after go-live. Maintenance, updates, and support are part of every engagement.",
+    },
+    {
+      icon: GraduationCap,
+      title: 'We Also Teach',
+      description: 'Beyond building, we train your team and the next generation of tech talent through structured programs.',
+    },
+  ]
   return (
     <section className="section-padding bg-muted">
       <div className="container-wide">

@@ -5,7 +5,7 @@ import {
   ArrowRight,
   CheckCircle2, MapPin, Users, Briefcase, Award,
   Link2, AtSign, Camera, Phone,
-  Mail, MessageCircle,
+  Mail, MessageCircle, Code2, Globe
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { coreValues, loadCompanyInfo, loadTeamMembers, defaultCompanyInfo, type CompanyInfoData, type TeamMemberData } from '../admin/aboutStore'

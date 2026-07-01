@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import * as Icons from 'lucide-react'
 import { ArrowRight } from 'lucide-react'
@@ -14,9 +13,11 @@ export default function AboutIntro() {
   // Dynamically join service titles to make the description 100% real-time
   const servicesList = pillars.length > 0
     ? pillars.map(p => p.title).slice(0, -1).join(', ') + ', and ' + pillars[pillars.length - 1].title
-    : 'Web Development, Software & App Development, AI & Automation Agents, Creative Services, Robotics, and Training & Education'
+    : ''
 
-  const description = `ManuelTECH delivers ${servicesList.toLowerCase().replace('ai', 'AI')} — everything your organization needs to compete and grow in a digital-first world.`
+  const description = servicesList
+    ? `ManuelTECH delivers ${servicesList.toLowerCase().replace('ai', 'AI')} — everything your organization needs to compete and grow in a digital-first world.`
+    : 'ManuelTECH delivers full-spectrum technology solutions — everything your organization needs to compete and grow in a digital-first world.'
 
   return (
     <section className="section-padding bg-white">

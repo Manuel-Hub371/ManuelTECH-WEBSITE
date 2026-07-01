@@ -55,7 +55,9 @@ export default function Testimonials() {
         <SectionHeading
           eyebrow="Client Stories"
           title="Trusted by leaders across industries"
-          description={`Real results from real clients — across all ${numberToWord(services.length)} of our service areas.`}
+          description={services.length > 0
+            ? `Real results from real clients — across all ${numberToWord(services.length)} of our service areas.`
+            : "Real results from real clients — across all of our service areas."}
         />
 
         <div className="mt-12 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">

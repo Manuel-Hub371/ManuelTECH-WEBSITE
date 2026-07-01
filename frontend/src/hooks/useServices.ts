@@ -28,10 +28,16 @@ async function ensureLoaded() {
 }
 
 export function useServices(): ServiceCategory[] {
-  const [services, setServices] = useState<ServiceCategory[]>(_cache ?? serviceCategories)
+  const [services, setServices] = useState<ServiceCategory[]>(_cache ?? [])
   useEffect(() => {
     const unsub = subscribe(setServices)
-    ensureLoaded().then(setServices).catch(() => {})
+    ensureLoaded()
+      .then(setServices)
+      .catch(() => {
+        if (_cache === null) {
+          setServices(serviceCategories)
+        }
+      })
     return unsub
   }, [])
   return services

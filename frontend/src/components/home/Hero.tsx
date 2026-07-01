@@ -53,7 +53,21 @@ export default function Hero() {
           >
             <span className="h-0.5 w-8 bg-primary-500" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-400">
-              Technology · Design · Education
+              {services.length > 0
+                ? services.slice(0, 3).map(s => {
+                    const title = s.title.toLowerCase();
+                    if (title.includes('web') || title.includes('software') || title.includes('ai') || title.includes('robotics')) {
+                      return 'Technology';
+                    }
+                    if (title.includes('creative') || title.includes('design')) {
+                      return 'Design';
+                    }
+                    if (title.includes('training') || title.includes('education')) {
+                      return 'Education';
+                    }
+                    return s.title.split(' ')[0];
+                  }).filter((v, idx, self) => self.indexOf(v) === idx).join(' · ')
+                : 'Technology · Design · Education'}
             </span>
           </motion.div>
 

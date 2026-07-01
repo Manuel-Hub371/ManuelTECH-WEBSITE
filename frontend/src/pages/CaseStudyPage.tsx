@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Building2, Layers, Loader2 } from 
 import type { CaseStudy } from '../data/products'
 import { loadCaseStudies } from '../admin/caseStudyStore'
 import CTABand from '../components/home/CTABand'
-import { useServices, buildCategoryColorMap, buildBorderAccentMap } from '../hooks/useServices'
+import { useServices, buildCategoryColorMap } from '../hooks/useServices'
 
 export default function CaseStudyPage() {
   const { id }   = useParams<{ id: string }>()

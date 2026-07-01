@@ -48,8 +48,10 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <Logo variant="light" />
             <p className="mt-5 max-w-sm text-sm leading-relaxed">
-              ManuelTECH delivers web development, custom software, AI agents, automation, robotics,
-              creative design, and technology training — everything your organization needs to grow.
+              ManuelTECH delivers {services.length > 0
+                ? services.map(s => s.title.toLowerCase().replace('ai', 'AI')).slice(0, -1).join(', ') + ', and ' + services[services.length - 1].title.toLowerCase().replace('ai', 'AI')
+                : 'web development, custom software, AI agents, automation, robotics, creative design, and technology training'
+              } — everything your organization needs to grow.
             </p>
             {socialLinks.length > 0 && (
               <div className="mt-6 flex gap-2">
